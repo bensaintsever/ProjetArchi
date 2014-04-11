@@ -1,0 +1,14 @@
+misc/hcl.tab.c
+misc/hcl.tab.h
+misc/hcl2c
+misc/lex.yy.c
+misc/yas
+misc/yas-grammar.c
+misc/yis
+pipe/*.yo
+pipe/pipe-*.c
+pipe/psim
+seq/*.yo
+seq/seq-*.c
+seq/ssim
+y86-code/*.yo
