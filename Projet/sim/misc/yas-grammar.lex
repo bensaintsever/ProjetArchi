@@ -2,7 +2,7 @@
  #include "yas.h"
  unsigned int atoh(const char *);
 
-Instr         rrmovl|rmmovl|mrmovl|irmovl|addl|subl|andl|xorl|sall|sarl|jmp|jle|jl|je|jne|jge|jg|call|ret|pushl|popl|"."byte|"."word|"."long|"."pos|"."align|halt|nop|iaddl|isubl|iandl|ixorl|isall|isarl|leave|jreg|jmem
+Instr         rrmovl|rmmovl|leal|mrmovl|irmovl|addl|subl|andl|xorl|sall|sarl|jmp|jle|jl|je|jne|jge|jg|call|ret|pushl|popl|"."byte|"."word|"."long|"."pos|"."align|halt|nop|iaddl|isubl|iandl|ixorl|isall|isarl|leave|jreg|jmem
 Letter        [a-zA-Z]
 Digit         [0-9]
 Ident         {Letter}({Letter}|{Digit}|_)*

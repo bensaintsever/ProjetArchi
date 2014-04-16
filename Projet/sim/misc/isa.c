@@ -53,7 +53,7 @@ instr_t instruction_set[] =
     /* arg1hi indicates number of bytes */
     {"irmovl", HPACK(I_IRMOVL, 0), 6, I_ARG, 2, 4, R_ARG, 1, 0 },
     /*Ajout de leal avec iFun a 1*/
-    {"leal",   HPACK(I_LEAL, 1), 6, M_ARG, 2, 4, R_ARG, 1, 0 },
+    {"leal",   HPACK(I_IRMOVL, 1), 6, M_ARG, 1, 0, R_ARG, 1, 1 },
     {"rmmovl", HPACK(I_RMMOVL, 0), 6, R_ARG, 1, 1, M_ARG, 1, 0 },
     {"mrmovl", HPACK(I_MRMOVL, 0), 6, M_ARG, 1, 0, R_ARG, 1, 1 },
     {"addl",   HPACK(I_ALU, A_ADD), 2, R_ARG, 1, 1, R_ARG, 1, 0 },
