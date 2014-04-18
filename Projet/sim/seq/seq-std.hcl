@@ -28,7 +28,7 @@ intsig RRMOVL	'I_RRMOVL'
 intsig IRMOVL	'I_IRMOVL'
 intsig RMMOVL	'I_RMMOVL'
 intsig MRMOVL	'I_MRMOVL'
-intsig LEAL     'I_LEAL'	
+intsig LEAL     'I_IRMOVL'	
 	
 intsig OPL	'I_ALU'
 intsig IOPL	'I_ALUI'
@@ -56,7 +56,6 @@ intsig pc 'pc'				# Program counter
 ##### Fetch stage computations		#####
 intsig icode	'icode'			# Instruction control code
 intsig ifun	'ifun'			# Instruction function
-intsig D_ifun   'if_id_curr->ifun'	# Instruction function
 intsig rA	'ra'			# rA field from instruction
 intsig rB	'rb'			# rB field from instruction
 intsig valC	'valc'			# Constant from instruction
@@ -82,7 +81,7 @@ intsig valM	'valm'			# Value read from memory
 
 # Does fetched instruction require a regid byte?
 bool need_regids =
-	icode in { RRMOVL, OPL, IOPL, PUSHL, POPL, IRMOVL, RMMOVL, MRMOVL, LEAL };
+	icode in { RRMOVL, OPL, IOPL, PUSHL, POPL, IRMOVL, RMMOVL, MRMOVL };
 
 # Does fetched instruction require a constant word?
 bool need_valC =
@@ -90,13 +89,13 @@ bool need_valC =
 
 bool instr_valid = icode in 
 	{ NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
-	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL, LEAL };
+	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL };
 
 ################ Decode Stage    ###################################
 
 ## What register should be used as the A source?
 int srcA = [
-	icode in { RRMOVL, RMMOVL, OPL, PUSHL, LEAL } : rA;
+	icode in { RRMOVL, RMMOVL, OPL, PUSHL } : rA;
 	icode in { POPL, RET } : RESP;
 	1 : RNONE; # Don't need register
 ];
@@ -105,13 +104,16 @@ int srcA = [
 int srcB = [
 	icode in { OPL, IOPL, RMMOVL, MRMOVL } : rB;
 	icode in { PUSHL, POPL, CALL, RET } : RESP;
+	(icode == LEAL) && (ifun == 1):rB;
 	1 : RNONE;  # Don't need register
 ];
 
 ## What register should be used as the E destination?
 int dstE = [
-	icode in { RRMOVL, IRMOVL, OPL, IOPL, LEAL} : rB;
+	icode in { RRMOVL, OPL, IOPL} : rB;
 	icode in { PUSHL, POPL, CALL, RET } : RESP;
+	(icode == IRMOVL) && (ifun == 0) : rB;
+	(icode == LEAL) && (ifun == 1) : rA;
 	1 : RNONE;  # Don't need register
 ];
 
@@ -125,8 +127,10 @@ int dstM = [
 
 ## Select input A to ALU
 int aluA = [
-	icode in { RRMOVL, OPL, LEAL } : valA;
-	icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : valC;
+	icode in { RRMOVL, OPL} : valA;
+	icode in { RMMOVL, MRMOVL, IOPL } : valC;
+	(icode == IRMOVL) && (ifun == 0) : valC;
+	(icode == LEAL) && (ifun == 1): valA;
 	icode in { CALL, PUSHL } : -4;
 	icode in { RET, POPL } : 4;
 	# Other instructions don't need ALU
@@ -134,24 +138,26 @@ int aluA = [
 
 ## Select input B to ALU
 int aluB = [
-	icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, PUSHL, RET, POPL } : valB;
-	icode in { RRMOVL, IRMOVL, LEAL } : 0;
+	icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, PUSHL, RET, POPL} : valB;
+	(icode == RRMOVL) : 0;
+	(icode == IRMOVL) && (ifun == 0) : 0;
+	(icode == LEAL) && (ifun == 1): valB;
 	# Other instructions don't need ALU
 ];
 
 ## Set the ALU function
 int alufun = [
-	icode in { OPL, IOPL } : ifun;
+	icode in { OPL, IOPL} : ifun;
 	1 : ALUADD;
 ];
 
 ## Should the condition codes be updated?
-bool set_cc = icode in { OPL, IOPL };
+bool set_cc = icode in { OPL, IOPL};
 
 ################ Memory Stage    ###################################
 
 ## Set read control signal
-bool mem_read = icode in { MRMOVL, POPL, RET, LEAL };
+bool mem_read = icode in { MRMOVL, POPL, RET };
 
 ## Set write control signal
 bool mem_write = icode in { RMMOVL, PUSHL, CALL };
@@ -181,7 +187,8 @@ int new_pc = [
 	icode == CALL : valC;
 	# Taken branch.  Use instruction constant
 	icode == JXX && Bch : valC;
-	icode == LEAL : valA;
+	(icode == IRMOVL) && (ifun == 0) : valE;
+	#LEAL
 	# Completion of RET instruction.  Use value from stack
 	icode == RET : valM;
 	# Default: Use incremented PC
