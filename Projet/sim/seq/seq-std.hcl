@@ -28,7 +28,7 @@ intsig RRMOVL	'I_RRMOVL'
 intsig IRMOVL	'I_IRMOVL'
 intsig RMMOVL	'I_RMMOVL'
 intsig MRMOVL	'I_MRMOVL'
-intsig LEAL     'I_IRMOVL'	
+intsig LEAL     'I_IRMOVL'
 	
 intsig OPL	'I_ALU'
 intsig IOPL	'I_ALUI'
@@ -89,7 +89,7 @@ bool need_valC =
 
 bool instr_valid = icode in 
 	{ NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
-	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL };
+	    OPL, IOPL, JXX, CALL, RET, PUSHL, POPL };
 
 ################ Decode Stage    ###################################
 
@@ -97,6 +97,7 @@ bool instr_valid = icode in
 int srcA = [
 	icode in { RRMOVL, RMMOVL, OPL, PUSHL } : rA;
 	icode in { POPL, RET } : RESP;
+	(icode == LEAL) && (ifun == 1):rB;
 	1 : RNONE; # Don't need register
 ];
 
@@ -104,7 +105,6 @@ int srcA = [
 int srcB = [
 	icode in { OPL, IOPL, RMMOVL, MRMOVL } : rB;
 	icode in { PUSHL, POPL, CALL, RET } : RESP;
-	(icode == LEAL) && (ifun == 1):rB;
 	1 : RNONE;  # Don't need register
 ];
 
@@ -130,7 +130,7 @@ int aluA = [
 	icode in { RRMOVL, OPL} : valA;
 	icode in { RMMOVL, MRMOVL, IOPL } : valC;
 	(icode == IRMOVL) && (ifun == 0) : valC;
-	(icode == LEAL) && (ifun == 1): valA;
+	(icode == LEAL) && (ifun == 1): valC;
 	icode in { CALL, PUSHL } : -4;
 	icode in { RET, POPL } : 4;
 	# Other instructions don't need ALU
@@ -141,7 +141,7 @@ int aluB = [
 	icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, PUSHL, RET, POPL} : valB;
 	(icode == RRMOVL) : 0;
 	(icode == IRMOVL) && (ifun == 0) : 0;
-	(icode == LEAL) && (ifun == 1): valB;
+	(icode == LEAL) && (ifun == 1): valA;
 	# Other instructions don't need ALU
 ];
 
@@ -187,8 +187,6 @@ int new_pc = [
 	icode == CALL : valC;
 	# Taken branch.  Use instruction constant
 	icode == JXX && Bch : valC;
-	(icode == IRMOVL) && (ifun == 0) : valE;
-	#LEAL
 	# Completion of RET instruction.  Use value from stack
 	icode == RET : valM;
 	# Default: Use incremented PC
