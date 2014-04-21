@@ -6,6 +6,8 @@
 \contentsline {paragraph}{Assembleur\\}{3}
 \contentsline {paragraph}{Fichier test\_leal.ys : \\}{4}
 \contentsline {paragraph}{Code HCL : \\}{4}
-\contentsline {paragraph}{Etape FETCH : \\}{4}
-\contentsline {paragraph}{Etape Decode :\\}{4}
-\contentsline {paragraph}{Etape Execute : \\}{4}
+\contentsline {section}{\numberline {2.2}Architecture s\'equentielle}{5}
+\contentsline {paragraph}{Etape FETCH : \\}{5}
+\contentsline {paragraph}{Etape Decode :\\}{5}
+\contentsline {paragraph}{Etape Execute : \\}{5}
+\contentsline {section}{\numberline {2.3}Architecture pipe\discretionary {-}{}{}lines}{7}
