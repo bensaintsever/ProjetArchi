@@ -37,6 +37,7 @@ intsig POPL	'I_POPL'
 intsig JMEM	'I_JMEM'
 intsig JREG	'I_JREG'
 intsig LEAVE	'I_LEAVE'
+intsig LEAL	'I_IRMOVL'
 
 ##### Symbolic representation of Y86 Registers referenced explicitly #####
 intsig RESP     'REG_ESP'    	# Stack Pointer
@@ -61,10 +62,12 @@ intsig f_valC	'if_id_next->valc'   # Constant data of fetched instruction
 intsig f_valP	'if_id_next->valp'   # Address of following instruction
 
 ##### Pipeline Register D ##########################################
+
 intsig D_icode 'if_id_curr->icode'	# Instruction code
 intsig D_rA 'if_id_curr->ra'	# rA field from instruction
 intsig D_rB 'if_id_curr->rb'	# rB field from instruction
 intsig D_valP 'if_id_curr->valp'	# Incremented PC
+intsig D_ifun 'if_id_curr->ifun'	# Instruction function
 
 ##### Intermediate Values in Decode Stage  #########################
 
@@ -148,6 +151,7 @@ int new_F_predPC = [
 ## What register should be used as the A source?
 int new_E_srcA = [
 	D_icode in { RRMOVL, RMMOVL, OPL, PUSHL } : D_rA;
+	(D_icode == IRMOVL && D_ifun == 1) : D_rB;
 	D_icode in { POPL, RET } : RESP;
 	1 : RNONE; # Don't need register
 ];
@@ -161,8 +165,10 @@ int new_E_srcB = [
 
 ## What register should be used as the E destination?
 int new_E_dstE = [
-	D_icode in { RRMOVL, IRMOVL, OPL, IOPL } : D_rB;
+	D_icode in { RRMOVL, OPL, IOPL } : D_rB;
 	D_icode in { PUSHL, POPL, CALL, RET } : RESP;
+	(D_icode == IRMOVL && D_ifun == 1) : D_rA;
+	(D_icode == IRMOVL && D_ifun == 0) : D_rB;
 	1 : DNONE;  # Don't need register DNONE, not RNONE
 ];
 
@@ -208,6 +214,7 @@ int aluA = [
 int aluB = [
 	E_icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, 
 		      PUSHL, RET, POPL } : E_valB;
+	(E_icode == IRMOVL && E_ifun == 1) : E_valA;
 	E_icode in { RRMOVL, IRMOVL } : 0;
 	# Other instructions don't need ALU
 ];
