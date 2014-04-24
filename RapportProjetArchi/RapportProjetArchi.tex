@@ -34,7 +34,7 @@
 Le but de ce projet est de montrer la possibilité d'extension de l'architecture y86, en ajoutant des instructions et en manipulant les prédictions de branchement. Ce projet a pour vocation de nous enseigner la programmation de langage machine tout en tirant parti au mieux des capacités des ordinateurs. 
 
 %EXERCICE 1
-\chapter {Exercice 1}
+\chapter {Exercice 1 : Ajout de l'instruction leal}
 \section{implémentation de leal}
 \paragraph{Description\\}
 
@@ -73,14 +73,15 @@ On déplace de 8 à partir de l'adresse du registre \%eax et on attribue l'adresse
         halt
 \end{lstlisting}
 
+
+\section{Architecture séquentielle}
 \paragraph{Code HCL : \\}
 On ajoute le code d'instruction irmovl pour identifier leal:
 \begin{lstlisting}
 intsig LEAL     'I_IRMOVL'
 \end{lstlisting}
-\newpage
 
-\section{Architecture séquentielle}
+
 \paragraph{Etape FETCH : \\}On ne modifie rien puisque l'on interprète le même fonctionnement que l'instruction irmovl.
 \paragraph{Etape Decode :\\}le contenue du registre 'B' (Source) est attribué à la source A.
 \begin{lstlisting}
@@ -116,13 +117,13 @@ int aluB = [
 %IMAGES
 \begin{figure}[h!]
   \centering 
-  \includegraphics[height=9.5cm]{leal.png}
+  \includegraphics[height=11cm]{leal.png}
   \caption{Fetch}
 \end{figure}
 
 \begin{figure}[h!]
   \centering 
-  \includegraphics[height=9cm]{valeurleal.png}
+  \includegraphics[height=15cm]{valeurleal.png}
   \caption{Decode}
 \end{figure}
 \clearpage
@@ -200,7 +201,42 @@ eax vaut 3, on ajoute 8 à l'adresse de ce dernier et on stocke le résultat de da
 
 
 %EXERCICE 2
-\chapter{Exercice 2}
+\chapter{Exercice 2 : Mise en \oe{}uvre de stratégies de prédiction statique}
+
+Gestion des versions:
+- nouveau fichier "pipe-maversion1.hcl"
+- changer la variable VERSION dans le fichier Makefile
+
+
+Analyse du CPI:
+- ajout des fichiers test loop.ys et cpi.ys
+- make loop.yo et make cpi.yo
+- ./psim -g loop.yo et  ./psim -g cpi.yo
+
+***********
+Question 1: Expliquer pourquoi on perd du temps avec la prédiction de branchement actuelle de type « toujours ».
+
+On perd du temps avec la prédiction de branchement actuelle de type « toujours » car le nombre de cycles et plus important que le nombre d'intructions réalisées, pour le cpi.yo on a :
+
+http://nsa34.casimages.com/img/2014/04/20/140420103841423233.jpg
+***********
+
+La prédiction de branchement est une fonctionnalité d'un processeur qui lui permet de prédire le résultat d'un branchement. Cette technique permet à un processeur de rendre l'utilisation de son pipeline plus efficace. Avec cette technique, le processeur va faire de l?exécution spéculative : il va parier sur le résultat d'un branchement, et va poursuivre l?exécution du programme avec le résultat du pari. Si le pari échoue, les instructions chargées par erreur dans le pipeline sont annulées.
+
+
+- valC utilisé comme adresse de la prochaine instruction.
+- valP conservé le long du pipe-line pour devenir l?adresse de la prochaine instruction si la prédiction s?avère fausse (valP est multiplexé en tant que valA dès l'étage E).
+
+
+Prédiction de branchement "jamais":
+Il se pourra que ce soit valP qui serve d?adresse de la prochaine instruction, et il faudra alors préserver valC.
+=> propager valC également jusqu?à l?étage M, en plus de valP/valA.
+
+
+ajout : intsig JUNCOND ?J_YES?
+
+
+on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)" pour les tests.
 
 
 \end{document}
