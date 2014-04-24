@@ -1,0 +1,3 @@
+	irmovl 3, %eax
+	leal 8(%eax), %ebx
+	halt
