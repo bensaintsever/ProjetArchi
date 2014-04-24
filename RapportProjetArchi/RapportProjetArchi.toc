@@ -11,3 +11,6 @@
 \contentsline {paragraph}{Etape Decode :\\}{5}
 \contentsline {paragraph}{Etape Execute : \\}{5}
 \contentsline {section}{\numberline {2.3}Architecture pipe\discretionary {-}{}{}lines}{7}
+\contentsline {paragraph}{Etape Decode : \\}{7}
+\contentsline {paragraph}{Etape Execute : \\}{7}
+\contentsline {chapter}{\numberline {3}Exercice 2}{9}

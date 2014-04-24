@@ -33,6 +33,7 @@
 \chapter{Introduction}
 Le but de ce projet est de montrer la possibilité d'extension de l'architecture y86, en ajoutant des instructions et en manipulant les prédictions de branchement. Ce projet a pour vocation de nous enseigner la programmation de langage machine tout en tirant parti au mieux des capacités des ordinateurs. 
 
+%EXERCICE 1
 \chapter {Exercice 1}
 \section{implémentation de leal}
 \paragraph{Description\\}
@@ -100,8 +101,10 @@ int dstE = [
 On place ValC dans l'aluA et ValA dans l'aluB, cela permettre d'effectuer le calcul de déplacement :
 \begin{lstlisting}
 int aluA = [
-        (icode == IRMOVL) && (ifun == 0) : valC;
+        (icode == IRMOVL) && (ifun == 0) : valC;  
         (icode == LEAL) && (ifun == 1): valC;
+	#Deux lignes pour la lisibilité mais on peut aussi
+	 utiliser seulement icode in {irmovl} : valC
 ];
 int aluB = [
         (icode == IRMOVL) && (ifun == 0) : 0;
@@ -110,24 +113,94 @@ int aluB = [
 
 \end{lstlisting}
 
+%IMAGES
 \begin{figure}[h!]
   \centering 
   \includegraphics[height=9.5cm]{leal.png}
   \caption{Fetch}
-
 \end{figure}
 
 \begin{figure}[h!]
   \centering 
   \includegraphics[height=9cm]{valeurleal.png}
   \caption{Decode}
-
 \end{figure}
 \clearpage
 \newpage
+
+
+%PIPELINE
 \section{Architecture pipe\-lines}
+Afin de pouvoir identifier la bonne instruction à l'étage Decode il est nécessaire de récupérer la valeur de ifun qui permettra de différencier irmovl de leal, on ajoute donc la déclaration suivante :
+\begin{lstlisting}
+intsig D_ifun 'if_id_curr->ifun'	# Instruction function
+\end{lstlisting}
+
+La prise en compte de leal dans la hcl pipeline diffère peut de l'architecture séquentielle, il faut néanmoins prendre en compte le ifun et icode des étages concerner.
+ 
+\paragraph{Etape Decode : \\} 
+Meme chose que pour l'architecture seq :
+\begin{lstlisting}
+int new_E_srcA = [
+	D_icode in { RRMOVL, RMMOVL, OPL, PUSHL } : D_rA;
+	(D_icode == IRMOVL && D_ifun == 1) : D_rB;
+	D_icode in { POPL, RET } : RESP;
+	1 : RNONE; # Don't need register
+];
+
+int new_E_dstE = [
+	D_icode in { RRMOVL, OPL, IOPL } : D_rB;
+	D_icode in { PUSHL, POPL, CALL, RET } : RESP;
+	(D_icode == IRMOVL && D_ifun == 1) : D_rA;
+	(D_icode == IRMOVL && D_ifun == 0) : D_rB;
+	1 : DNONE;  # Don't need register DNONE, not RNONE
+];
+\end{lstlisting}
+
+\paragraph{Etape Execute : \\}
+Dans l'ALUA on utilise valC donc on ne modifie rien.
+\begin{lstlisting}
+int aluA = [
+	E_icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : E_valC;
+];
+\end{lstlisting}
+Dans l'ALUB on souhaite utiliser valA, IRMOVL n'utilise rien donc il utilise la condition qui suis.
+\begin{lstlisting}
+int aluB = [
+	(E_icode == IRMOVL && E_ifun == 1) : E_valA;
+	E_icode in { RRMOVL, IRMOVL } : 0;
+	# Other instructions don't need ALU
+];
+\end{lstlisting}
+\newpage
+eax vaut 3, on ajoute 8 à l'adresse de ce dernier et on stocke le résultat de dans ebx
+\begin{figure}[h!]
+  \centering 
+  \includegraphics[height = 5cm]{lealDecodePipe.png}
+  \caption{Decode}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering 
+    \includegraphics[height=5cm]{lealExePipe.png}
+  \caption{Execute}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering 
+    \includegraphics[height=1.5cm]{lealWBPipe.png}
+  \caption{Write Back}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering 
+    \includegraphics[height=1.5cm]{lealFinPipe.png}
+  \caption{Résultat}
+\end{figure}
 
 
+%EXERCICE 2
+\chapter{Exercice 2}
 
 
 \end{document}
