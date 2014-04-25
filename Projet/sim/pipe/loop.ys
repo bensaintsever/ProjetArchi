@@ -1,0 +1,48 @@
+        irmovl 1,%esi
+        irmovl 2,%edi
+        nop
+        nop
+        nop
+        addl   %esi,%edi
+        jmp    l0
+        #jmp    l1  # décommenter pour tester la boucle 1
+        #jmp    l2  # décommenter pour tester la boucle 2
+
+        nop
+
+l0:     nop
+        nop
+        nop
+        nop
+        nop
+	jmp end
+
+# boucle 1
+l1:
+        irmovl 3,%ecx
+loop1:  nop
+        nop
+        nop
+
+        irmovl 1,%eax
+        subl   %eax,%ecx
+        jne    loop1
+        
+        halt
+
+# boucle 2
+l2:
+        irmovl 1,%eax
+        irmovl 4,%ecx
+loop2:  subl   %eax,%ecx
+        je     end
+        nop
+        nop
+        nop
+        nop
+        nop
+
+        jmp    loop2
+
+end:    jmp end
+

@@ -1,0 +1,33 @@
+        irmovl t,%esi
+        mrmovl n,%ecx
+
+loop:   isubl  1,%ecx
+        jl     fin
+
+	irmovl 1,%eax
+        mrmovl (%esi),%ebx
+        andl   %ebx,%eax
+        jne    else
+
+        # pair, multiplier par deux
+        addl   %ebx,%ebx
+        jmp suite
+
+        # impair, mettre à zéro
+else:   irmovl 0,%ebx
+
+suite:  rmmovl %ebx,(%esi)
+        iaddl  4,%esi
+        jmp loop
+
+fin:    halt
+
+.pos 0x100
+n:      .long 7
+t:      .long 1
+        .long 2
+        .long 6
+        .long 10
+        .long 8
+        .long 5
+        .long 4
