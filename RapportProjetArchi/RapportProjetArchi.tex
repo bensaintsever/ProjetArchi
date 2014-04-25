@@ -204,15 +204,17 @@ eax vaut 3, on ajoute 8 à l'adresse de ce dernier et on stocke le résultat de da
 \chapter{Exercice 2 : Mise en \oe{}uvre de stratégies de prédiction statique}
 
 Gestion des versions:
-- nouveau fichier "pipe-maversion1.hcl"
-- changer la variable VERSION dans le fichier Makefile
-
+\begin{itemize}
+\item nouveau fichier "pipe-maversion1.hcl"
+\item changer la variable VERSION dans le fichier Makefile
+\end{itemize}
 
 Analyse du CPI:
-- ajout des fichiers test loop.ys et cpi.ys
-- make loop.yo et make cpi.yo
-- ./psim -g loop.yo et  ./psim -g cpi.yo
-
+\begin{itemize}
+\item ajout des fichiers test loop.ys et cpi.ys
+\item make loop.yo et make cpi.yo
+\item ./psim -g loop.yo et  ./psim -g cpi.yo
+\end{itemize}
 
 \paragraph{Question 1: Expliquer pourquoi on perd du temps avec la prédiction de branchement actuelle de type « toujours ».\\}
 
@@ -223,21 +225,26 @@ On perd du temps avec la prédiction de branchement actuelle de type « toujours »
 \end{figure}
 
 
+
 La prédiction de branchement est une fonctionnalité d'un processeur qui lui permet de prédire le résultat d'un branchement. Cette technique permet à un processeur de rendre l'utilisation de son pipeline plus efficace. Avec cette technique, le processeur va faire de l'exécution spéculative : il va parier sur le résultat d'un branchement, et va poursuivre l'exécution du programme avec le résultat du pari. Si le pari échoue, les instructions chargées par erreur dans le pipeline sont annulées.
+\newpage
+\paragraph{Dans le cas " toujours " :}
+\begin{itemize}
+\item valC utilisé comme adresse de la prochaine instruction.
+\item valP conservé le long du pipe-line pour devenir l'adresse de la prochaine instruction si la prédiction s'avère fausse (valP est multiplexé en tant que valA dès l'étage E).
+\end{itemize}
 
+il se pourra que ce soit valP qui serve d'adresse de la prochaine instruction, et il faudra alors préserver valC. Vous aurez donc besoin de propager valC également jusqu'à l'étage M, en plus de valP/valA. La faire cheminer dans l'UAL peut être un bon moyen pour cela, puisque celle-ci ne sert pas pour les branchements.
 
-- valC utilisé comme adresse de la prochaine instruction.
-- valP conservé le long du pipe-line pour devenir l'adresse de la prochaine instruction si la prédiction s'avère fausse (valP est multiplexé en tant que valA dès l'étage E).
-
-
-Prédiction de branchement "jamais":
-Il se pourra que ce soit valP qui serve d'adresse de la prochaine instruction, et il faudra alors préserver valC.
-=> propager valC également jusqu'à l'étage M, en plus de valP/valA.
-
+\paragraph{Prédiction de branchement " jamais ":}
+\begin{itemize}
+\item valP utilisé comme adresse de la prochaine instruction.
+\item valC conservé.
+\item propager valC également jusqu'à l'étage M, en plus de valP/valA.
+\end{itemize}
 %Instructions pour lesquelles on ne peut connaître l'adresse de la prochaine instruction :%Jxx : adresse connue après l'étage E On a le choix entre deux adresses%RET : adresse connue après l'étage M%RET : adresse connue après l'étage M%On ne peut absolument rien prédire
 \begin{lstlisting}
 ajout : intsig JUNCOND 'J_YES'
-
 
 on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)" 
 pour les tests.

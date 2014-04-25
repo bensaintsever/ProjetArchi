@@ -1,0 +1,19 @@
+\select@language {french}
+\contentsline {chapter}{\numberline {1}Introduction}{2}
+\contentsline {chapter}{\numberline {2}Exercice 1 : Ajout de l'instruction leal}{3}
+\contentsline {section}{\numberline {2.1}impl\'ementation de leal}{3}
+\contentsline {paragraph}{Description\\}{3}
+\contentsline {paragraph}{Assembleur\\}{3}
+\contentsline {paragraph}{Fichier test\_leal.ys : \\}{4}
+\contentsline {section}{\numberline {2.2}Architecture s\'equentielle}{4}
+\contentsline {paragraph}{Code HCL : \\}{4}
+\contentsline {paragraph}{Etape FETCH : \\}{4}
+\contentsline {paragraph}{Etape Decode :\\}{4}
+\contentsline {paragraph}{Etape Execute : \\}{4}
+\contentsline {section}{\numberline {2.3}Architecture pipe\discretionary {-}{}{}lines}{7}
+\contentsline {paragraph}{Etape Decode : \\}{7}
+\contentsline {paragraph}{Etape Execute : \\}{7}
+\contentsline {chapter}{\numberline {3}Exercice 2 : Mise en \oe {}uvre de strat\'egies de pr\'ediction statique}{9}
+\contentsline {paragraph}{Question 1: Expliquer pourquoi on perd du temps avec la pr\'ediction de branchement actuelle de type \IeC {\guillemotleft } toujours \IeC {\guillemotright }.\\}{9}
+\contentsline {paragraph}{Dans le cas " toujours " :}{10}
+\contentsline {paragraph}{Pr\'ediction de branchement " jamais ":}{10}
