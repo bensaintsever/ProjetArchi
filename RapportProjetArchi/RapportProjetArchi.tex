@@ -213,30 +213,34 @@ Analyse du CPI:
 - make loop.yo et make cpi.yo
 - ./psim -g loop.yo et  ./psim -g cpi.yo
 
-***********
-Question 1: Expliquer pourquoi on perd du temps avec la prédiction de branchement actuelle de type « toujours ».
 
-On perd du temps avec la prédiction de branchement actuelle de type « toujours » car le nombre de cycles et plus important que le nombre d'intructions réalisées, pour le cpi.yo on a :
+\paragraph{Question 1: Expliquer pourquoi on perd du temps avec la prédiction de branchement actuelle de type « toujours ».\\}
 
-http://nsa34.casimages.com/img/2014/04/20/140420103841423233.jpg
-***********
+On perd du temps avec la prédiction de branchement actuelle de type « toujours » car le nombre de cycles est plus important que le nombre d'instructions réalisées, du au fait que la condition est toujours vraie sauf en sortie de boucle. pour le cpi.yo on a :
+\begin{figure}[h!]
+  \centering 
+    \includegraphics[height=1.25cm]{BouclesCPI.jpg}
+\end{figure}
 
-La prédiction de branchement est une fonctionnalité d'un processeur qui lui permet de prédire le résultat d'un branchement. Cette technique permet à un processeur de rendre l'utilisation de son pipeline plus efficace. Avec cette technique, le processeur va faire de l?exécution spéculative : il va parier sur le résultat d'un branchement, et va poursuivre l?exécution du programme avec le résultat du pari. Si le pari échoue, les instructions chargées par erreur dans le pipeline sont annulées.
+
+La prédiction de branchement est une fonctionnalité d'un processeur qui lui permet de prédire le résultat d'un branchement. Cette technique permet à un processeur de rendre l'utilisation de son pipeline plus efficace. Avec cette technique, le processeur va faire de l'exécution spéculative : il va parier sur le résultat d'un branchement, et va poursuivre l'exécution du programme avec le résultat du pari. Si le pari échoue, les instructions chargées par erreur dans le pipeline sont annulées.
 
 
 - valC utilisé comme adresse de la prochaine instruction.
-- valP conservé le long du pipe-line pour devenir l?adresse de la prochaine instruction si la prédiction s?avère fausse (valP est multiplexé en tant que valA dès l'étage E).
+- valP conservé le long du pipe-line pour devenir l'adresse de la prochaine instruction si la prédiction s'avère fausse (valP est multiplexé en tant que valA dès l'étage E).
 
 
 Prédiction de branchement "jamais":
-Il se pourra que ce soit valP qui serve d?adresse de la prochaine instruction, et il faudra alors préserver valC.
-=> propager valC également jusqu?à l?étage M, en plus de valP/valA.
+Il se pourra que ce soit valP qui serve d'adresse de la prochaine instruction, et il faudra alors préserver valC.
+=> propager valC également jusqu'à l'étage M, en plus de valP/valA.
+
+%Instructions pour lesquelles on ne peut connaître l'adresse de la prochaine instruction :%Jxx : adresse connue après l'étage E On a le choix entre deux adresses%RET : adresse connue après l'étage M%RET : adresse connue après l'étage M%On ne peut absolument rien prédire
+\begin{lstlisting}
+ajout : intsig JUNCOND 'J_YES'
 
 
-ajout : intsig JUNCOND ?J_YES?
-
-
-on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)" pour les tests.
-
+on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)" 
+pour les tests.
+\end{lstlisting}
 
 \end{document}
