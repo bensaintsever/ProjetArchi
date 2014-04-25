@@ -47,6 +47,7 @@ intsig DNONE    'DEST_NONE'     # "no destination register"
 
 ##### ALU Functions referenced explicitly ##########################
 intsig ALUADD	'A_ADD'		# ALU should add its arguments
+intsig JUNCOND 'J_YES'		# Distinction branchements
 
 ##### Signals that can be referenced by control logic ##############
 
@@ -119,7 +120,8 @@ intsig W_valM  'mem_wb_curr->valm'	# Memory M value
 ## What address should instruction be fetched at
 int f_pc = [
 	# Mispredicted branch.  Fetch at incremented PC
-	M_icode == JXX && !M_Bch : M_valA;
+	(M_icode == JXX) && !M_Bch && (M_ifun!= JUNCOND) : M_valA ;
+	
 	# Completion of RET instruction.
 	W_icode == RET : W_valM;
 	# Default: Use predicted value of PC
@@ -140,7 +142,8 @@ bool instr_valid = f_icode in
 
 # Predict next value of PC
 int new_F_predPC = [
-	f_icode in { JXX, CALL } : f_valC;
+	f_icode in { CALL } : f_valC;
+	(f_icode == JXX) && (M_ifun!= JUNCOND):f_valC ;
 	1 : f_valP;
 ];
 
@@ -181,7 +184,8 @@ int new_E_dstM = [
 ## What should be the A value?
 ## Forward into decode stage for valA
 int new_E_valA = [
-	D_icode in { CALL, JXX } : D_valP; # Use incremented PC
+	D_icode in { CALL,JXX } : D_valP; # Use incremented PC
+	#(D_icode == JXX)&&(M_ifun!= JUNCOND) : D_valP ;
 	d_srcA == E_dstE : e_valE;    # Forward valE from execute
 	d_srcA == M_dstM : m_valM;    # Forward valM from memory
 	d_srcA == M_dstE : M_valE;    # Forward valE from memory
@@ -205,6 +209,8 @@ int new_E_valB = [
 int aluA = [
 	E_icode in { RRMOVL, OPL } : E_valA;
 	E_icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : E_valC;
+	#on utilise l'alu pour conservé la prochaine instruction
+	(E_icode == JXX)&&(E_ifun != JUNCOND) : E_valC;
 	E_icode in { CALL, PUSHL } : -4;
 	E_icode in { RET, POPL } : 4;
 	# Other instructions don't need ALU
