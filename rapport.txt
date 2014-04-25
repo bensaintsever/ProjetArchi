@@ -13,7 +13,7 @@ Analyse du CPI:
 ***********
 Question 1: Expliquer pourquoi on perd du temps avec la prédiction de branchement actuelle de type « toujours ».
 
-On perd du temps avec la prédiction de branchement actuelle de type « toujours » car le nombre de cycles et plus important que le nombre d'intructions réalisées, pour le cpi.yo on a :
+On perd du temps avec la prédiction de branchement actuelle de type « toujours » car on a inséré des bulles afin que l'exécution soit correcte, pour le cpi.yo on a au final:
 
 http://nsa34.casimages.com/img/2014/04/20/140420103841423233.jpg
 ***********
