@@ -216,17 +216,16 @@ Analyse du CPI:
 \item ./psim -g loop.yo et  ./psim -g cpi.yo
 \end{itemize}
 
-\paragraph{Question 1: Expliquer pourquoi on perd du temps avec la prédiction de branchement actuelle de type « toujours ».\\}
+La prédiction de branchement est une fonctionnalité d'un processeur qui lui permet de prédire le résultat d'un branchement. Cette technique permet à un processeur de rendre l'utilisation de son pipeline plus efficace. Avec cette technique, le processeur va faire de l'exécution spéculative : il va parier sur le résultat d'un branchement, et va poursuivre l'exécution du programme avec le résultat du pari. Si le pari échoue, les instructions chargées par erreur dans le pipeline sont annulées.
 
-On perd du temps avec la prédiction de branchement actuelle de type « toujours » car le nombre de cycles est plus important que le nombre d'instructions réalisées, du au fait que la condition est toujours vraie sauf en sortie de boucle. pour le cpi.yo on a :
+\paragraph{Question 1: Expliquer pourquoi on perd du temps avec la prédiction de branchement actuelle de type « toujours ».\\}
+La prediction de branchement de type "toujours" suppose que les branchements conditionnels vont toujours être pris, or ce n'est pas le cas de tous les programmes, lorsqu'une ou plusieurs conditions imbriqués dans une boucle ne sont vrai que rarement, il y a forcement une perte de temps. Le prédicteur de branchement prédit que les conditions sont vrai or elles ne le sont pas souvent. Exemple avec CPI.ys.
 \begin{figure}[h!]
   \centering 
     \includegraphics[height=1.25cm]{BouclesCPI.jpg}
 \end{figure}
 
 
-
-La prédiction de branchement est une fonctionnalité d'un processeur qui lui permet de prédire le résultat d'un branchement. Cette technique permet à un processeur de rendre l'utilisation de son pipeline plus efficace. Avec cette technique, le processeur va faire de l'exécution spéculative : il va parier sur le résultat d'un branchement, et va poursuivre l'exécution du programme avec le résultat du pari. Si le pari échoue, les instructions chargées par erreur dans le pipeline sont annulées.
 \newpage
 \paragraph{Dans le cas " toujours " :}
 \begin{itemize}
@@ -237,6 +236,7 @@ La prédiction de branchement est une fonctionnalité d'un processeur qui lui perm
 il se pourra que ce soit valP qui serve d'adresse de la prochaine instruction, et il faudra alors préserver valC. Vous aurez donc besoin de propager valC également jusqu'à l'étage M, en plus de valP/valA. La faire cheminer dans l'UAL peut être un bon moyen pour cela, puisque celle-ci ne sert pas pour les branchements.
 
 \paragraph{Prédiction de branchement " jamais ":}
+Permet d'obtenir de meilleure performance, au fait que la plus part du temps les branchement conditionnels ne sont pas pris et les branchements inconditionnels le sont. 
 \begin{itemize}
 \item valP utilisé comme adresse de la prochaine instruction.
 \item valC conservé.
@@ -246,8 +246,11 @@ il se pourra que ce soit valP qui serve d'adresse de la prochaine instruction, e
 \begin{lstlisting}
 ajout : intsig JUNCOND 'J_YES'
 
-on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)" 
-pour les tests.
+on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)"  pour tester les branchements conditionnels
 \end{lstlisting}
+
+\emph{Modification des lignes 123, 145,146,213}
+
+
 
 \end{document}
