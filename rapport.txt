@@ -34,3 +34,115 @@ ajout : intsig JUNCOND ’J_YES’
 
 
 on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)" pour les tests.
+
+
+Exercice 3:
+
+Question1:
+
+On remplace dans misc/isa.h et misc/isa.c I_POP2 par I_LSM.
+afin que lods corresponde à l’opcode I_LSM avec ifun=O , et stos au même opcode, avec ifun=1 et supprimer la définition de pop2
+
+Ajout dans pipe-exercice3.hcl:
+
+- Declarations:		intsig LSM	'I_LSM'
+
+- Fetch Stage:		
+
+bool instr_valid = f_icode in 
+	{ NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
+	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL, LSM };
+
+int instr_next_ifun = [
+	f_icode == LSM && f_ifun == 2 : 0;
+	f_icode == LSM && f_ifun == 0 : 1;
+	1 : -1; 
+];
+
+
+- Decode Stage:
+
+int new_E_srcA = [
+	D_icode == LSM && D_ifun == 1 : EAX;	# EAX : écriture mémoire dans EDI => srcA
+	D_icode == LSM && D_ifun == 0 : ESI;
+	
+	D_icode in { RRMOVL, RMMOVL, OPL, PUSHL } : D_rA;
+	D_icode in { POPL, RET } : RESP;
+	1 : RNONE; # Don't need register
+];
+
+int new_E_srcB = [
+	D_icode == LSM && D_ifun == 1 : EDI;	
+	D_icode in { OPL, IOPL, RMMOVL, MRMOVL } : D_rB;
+	D_icode in { PUSHL, POPL, CALL, RET } : RESP;
+	1 : RNONE;  # Don't need register
+];
+
+int new_E_dstE = [
+	D_icode == LSM && D_ifun == 0 : ESI;	# ESI est incrémenté dans ALU puis réaffecté à lui-même
+	D_icode == LSM && D_ifun == 1 : EDI;
+	
+	D_icode in { RRMOVL, IRMOVL, OPL, IOPL } : D_rB;
+	D_icode in { PUSHL, POPL, CALL, RET } : RESP;
+	1 : DNONE;  # Don't need register DNONE, not RNONE
+];
+
+int new_E_dstM = [
+	D_icode in { MRMOVL, POPL } : D_rA;
+	
+	D_icode == LSM && D_ifun == 0 : EAX;	# EAX prend la valeur lue en mémoire dans ESI
+
+	1 : DNONE;  # Don't need register DNONE, not RNONE
+];
+
+
+- Execute Stage:
+
+int aluA = [
+	E_icode == LSM && E_ifun == 0 : 4;
+	E_icode == LSM && E_ifun == 1 : 4;
+	E_icode in { RRMOVL, OPL } : E_valA;
+	E_icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : E_valC;
+	E_icode in { CALL, PUSHL } : -4;
+	E_icode in { RET, POPL } : 4;
+	# Other instructions don't need ALU
+];
+
+int aluB = [
+	E_icode == LSM && E_ifun == 0 : E_valA;		# Incrémentation de ESI
+	E_icode == LSM && E_ifun == 1 : E_valB;		# On décrémente de 4 le pointeur EDI
+	
+	E_icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, 
+		      PUSHL, RET, POPL } : E_valB;
+	E_icode in { RRMOVL, IRMOVL } : 0;
+	# Other instructions don't need ALU
+];
+
+
+- Memory Stage:
+
+bool mem_read = M_icode in { MRMOVL, POPL, RET} || (M_icode == LSM && M_ifun == 0);
+
+bool mem_write = M_icode in { RMMOVL, PUSHL, CALL } || (M_icode == LSM && M_ifun ==1);
+
+int mem_addr = [
+	#injection de esi dans eax
+	M_icode == LSM && M_ifun == 0 : M_valA;
+	
+	M_icode in { RMMOVL, PUSHL, CALL, MRMOVL } : M_valE;
+	M_icode == LSM && M_ifun ==1 : M_valE;
+	M_icode in { POPL, RET } : M_valA;
+	# Other instructions don't need address
+];
+
+
+
+
+
+
+
+
+
+
+
+
