@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.3.20)  25 APR 2014 19:53
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2014.3.20)  27 APR 2014 20:12
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -361,32 +361,90 @@ Overfull \hbox (25.43468pt too wide) in paragraph at lines 254--255
 [][][][][][][][][][][][][][][][][][][][][][][][][][]
  []
 
-[10 <./BouclesCPI.jpg>] (./RapportProjetArchi.aux) ) 
+[10 <./BouclesCPI.jpg>]
+Chapitre 4.
+
+Overfull \hbox (38.50026pt too wide) in paragraph at lines 278--280
+[][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (12.3691pt too wide) in paragraph at lines 294--295
+[][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[11
+
+]
+Overfull \hbox (5.8363pt too wide) in paragraph at lines 301--302
+[][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (51.56584pt too wide) in paragraph at lines 308--309
+[][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (5.8363pt too wide) in paragraph at lines 311--312
+[][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (18.90189pt too wide) in paragraph at lines 313--314
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (18.90189pt too wide) in paragraph at lines 322--323
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[12]
+Overfull \hbox (38.50026pt too wide) in paragraph at lines 333--334
+[][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+
+Overfull \hbox (31.96747pt too wide) in paragraph at lines 365--366
+[][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+[13]
+Overfull \hbox (12.3691pt too wide) in paragraph at lines 390--391
+[][][][][][][][][][][] 
+ []
+
+[14]
+Chapitre 5.
+[15
+
+] (./RapportProjetArchi.aux) ) 
 Here is how much of TeX's memory you used:
  4472 strings out of 493315
  60359 string characters out of 6137904
- 139801 words of memory out of 5000000
+ 147801 words of memory out of 5000000
  7862 multiletter control sequences out of 15000+600000
  17206 words of font info for 39 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  38i,11n,43p,541b,1694s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2013/te
-xmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/local/texlive/2013/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2013/texmf
--dist/fonts/type1/public/cm-super/sfbx1095.pfb></usr/local/texlive/2013/texmf-d
-ist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/2013/texmf-dis
-t/fonts/type1/public/cm-super/sfbx2074.pfb></usr/local/texlive/2013/texmf-dist/
-fonts/type1/public/cm-super/sfbx2488.pfb></usr/local/texlive/2013/texmf-dist/fo
-nts/type1/public/cm-super/sfcc1095.pfb></usr/local/texlive/2013/texmf-dist/font
-s/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/
-type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2013/texmf-dist/fonts/ty
-pe1/public/cm-super/sfrm1728.pfb></usr/local/texlive/2013/texmf-dist/fonts/type
-1/public/cm-super/sfsl1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/
-public/cm-super/sfti1095.pfb>
-Output written on RapportProjetArchi.pdf (11 pages, 334678 bytes).
+{/usr/local/texlive/2013/texmf-dist/fonts/enc/dvi
+ps/cm-super/cm-super-t1.enc}</usr/local/texlive/2013/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/publ
+ic/cm-super/sfbx1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public
+/cm-super/sfbx1440.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/c
+m-super/sfbx2074.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-
+super/sfbx2488.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-su
+per/sfcc1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-supe
+r/sfrm1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/
+sfrm1200.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/sf
+rm1728.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/sfsl
+1095.pfb></usr/local/texlive/2013/texmf-dist/fonts/type1/public/cm-super/sfti10
+95.pfb>
+Output written on RapportProjetArchi.pdf (16 pages, 336822 bytes).
 PDF statistics:
- 98 PDF objects out of 1000 (max. 8388607)
- 61 compressed objects within 1 object stream
+ 114 PDF objects out of 1000 (max. 8388607)
+ 72 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  36 words of extra memory for PDF output out of 10000 (max. 10000000)
 

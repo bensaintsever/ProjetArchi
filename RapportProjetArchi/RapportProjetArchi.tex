@@ -242,7 +242,12 @@ Permet d'obtenir de meilleure performance, au fait que la plus part du temps les
 \item valC conservé.
 \item propager valC également jusqu'à l'étage M, en plus de valP/valA.
 \end{itemize}
-%Instructions pour lesquelles on ne peut connaître l'adresse de la prochaine instruction :%Jxx : adresse connue après l'étage E On a le choix entre deux adresses%RET : adresse connue après l'étage M%RET : adresse connue après l'étage M%On ne peut absolument rien prédire
+
+%Instructions pour lesquelles on ne peut connaître l'adresse de la prochaine instruction :
+%Jxx : adresse connue après l'étage E On a le choix entre deux adresses
+%RET : adresse connue après l'étage M
+%RET : adresse connue après l'étage M
+%On ne peut absolument rien prédire
 \begin{lstlisting}
 ajout : intsig JUNCOND 'J_YES'
 
@@ -251,6 +256,148 @@ on utilise alors "(M_icode == JXX) && (M_ifun!= JUNCOND)"  pour tester les branc
 
 \emph{Modification des lignes 123, 145,146,213}
 
+\chapter{Exercice 3 : Exécution d'instructions sur plusieurs cycles}
 
 
+\section{Question1:}
+
+On remplace dans misc, isa.h et misc, isa.c IPOP2 par ILSM.
+afin que lods corresponde à l'opcode ILSM avec ifun=O , et stos au même opcode, avec ifun=1 et supprimer la définition de pop2
+
+Ajout dans pipe-exercice3.hcl:
+\begin{lstlisting}
+- Declarations:	
+	intsig LSM	'I_LSM'
+\end{lstlisting}
+
+	
+\begin{lstlisting}
+- Fetch Stage:	
+bool instr_valid = f_icode in 
+	{ NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
+	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL, LSM };
+
+int instr_next_ifun = [
+	f_icode == LSM && f_ifun == 2 : 0;
+	f_icode == LSM && f_ifun == 0 : 1;
+	1 : -1; 
+];
+\end{lstlisting}
+
+- Decode Stage:
+\begin{lstlisting}
+int new_E_srcA = [
+	D_icode == LSM && D_ifun == 1 : EAX;	
+	# EAX : écriture mémoire dans EDI => srcA
+	D_icode == LSM && D_ifun == 0 : ESI;
+	
+	D_icode in { RRMOVL, RMMOVL, OPL, PUSHL } : D_rA;
+	D_icode in { POPL, RET } : RESP;
+	1 : RNONE; # Don't need register
+];
+
+int new_E_srcB = [
+	D_icode == LSM && D_ifun == 1 : EDI;	
+	D_icode in { OPL, IOPL, RMMOVL, MRMOVL } : D_rB;
+	D_icode in { PUSHL, POPL, CALL, RET } : RESP;
+	1 : RNONE;  # Don't need register
+];
+
+int new_E_dstE = [
+	D_icode == LSM && D_ifun == 0 : ESI;	
+	# ESI est incrémenté dans ALU puis réaffecté à lui-même
+	D_icode == LSM && D_ifun == 1 : EDI;
+	
+	D_icode in { RRMOVL, IRMOVL, OPL, IOPL } : D_rB;
+	D_icode in { PUSHL, POPL, CALL, RET } : RESP;
+	1 : DNONE;  # Don't need register DNONE, not RNONE
+];
+
+int new_E_dstM = [
+	D_icode in { MRMOVL, POPL } : D_rA;
+	
+	D_icode == LSM && D_ifun == 0 : EAX;	
+	# EAX prend la valeur lue en mémoire dans ESI
+
+	1 : DNONE;  # Don't need register DNONE, not RNONE
+];
+
+\end{lstlisting}
+\newpage
+\begin{lstlisting}
+- Execute Stage:
+int aluA = [
+	E_icode == LSM && E_ifun == 0 : 4;
+	E_icode == LSM && E_ifun == 1 : 4;
+	E_icode in { RRMOVL, OPL } : E_valA;
+	E_icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : E_valC;
+	E_icode in { CALL, PUSHL } : -4;
+	E_icode in { RET, POPL } : 4;
+	# Other instructions don't need ALU
+];
+
+int aluB = [
+	E_icode == LSM && E_ifun == 0 : E_valA;		
+	# Incrémentation de ESI
+	E_icode == LSM && E_ifun == 1 : E_valB;		
+	# On décrémente de 4 le pointeur EDI
+	
+	E_icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, 
+		      PUSHL, RET, POPL } : E_valB;
+	E_icode in { RRMOVL, IRMOVL } : 0;
+	# Other instructions don't need ALU
+];
+\end{lstlisting}
+
+
+\begin{lstlisting}
+- Memory Stage:
+bool mem_read = M_icode in { MRMOVL, POPL, RET} || 
+(M_icode == LSM && M_ifun == 0);
+
+bool mem_write = M_icode in { RMMOVL, PUSHL, CALL } || 
+(M_icode == LSM && M_ifun ==1);
+
+int mem_addr = [
+	#injection de esi dans eax
+	M_icode == LSM && M_ifun == 0 : M_valA;
+	
+	M_icode in { RMMOVL, PUSHL, CALL, MRMOVL } : M_valE;
+	M_icode == LSM && M_ifun ==1 : M_valE;
+	M_icode in { POPL, RET } : M_valA;
+	# Other instructions don't need address
+];
+
+\end{lstlisting}
+
+\newpage
+Dans pipe/psim.c:
+
+\begin{lstlisting}
+- Ajout dans stage implementations:	
+	int gen_instr_next_ifun();
+\end{lstlisting}
+
+
+ \begin{lstlisting}
+ - Ajout de conditions : 
+	/* Ready to fetch instruction.  
+	Speculatively fetch register byte
+	       and immediate word
+	*/
+
+	if(gen_instr_next_ifun() != -1)
+		if_id_next->ifun = gen_instr_next_ifun();
+	else{...}
+
+	fetch_ok = TRUE;
+
+
+    	if (gen_instr_next_ifun() == -1)
+      		pc_next->pc = gen_new_F_predPC();
+\end{lstlisting}
+
+\chapter{Conclusion}
+Nous avons utilisé github qui est un logiciel de gestion de version qui nous a permis de travailler indépendament mais aussi en collaboration.
+Nous n'avons pas terminé le projet principalement par manque de temps du à d'autres projet en cour.
 \end{document}

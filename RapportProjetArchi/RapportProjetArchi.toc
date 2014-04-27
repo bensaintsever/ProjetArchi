@@ -17,3 +17,6 @@
 \contentsline {paragraph}{Question 1: Expliquer pourquoi on perd du temps avec la pr\'ediction de branchement actuelle de type \IeC {\guillemotleft } toujours \IeC {\guillemotright }.\\}{9}
 \contentsline {paragraph}{Dans le cas " toujours " :}{10}
 \contentsline {paragraph}{Pr\'ediction de branchement " jamais ":}{10}
+\contentsline {chapter}{\numberline {4}Exercice 3 : Ex\'ecution d'instructions sur plusieurs cycles}{11}
+\contentsline {section}{\numberline {4.1}Question1:}{11}
+\contentsline {chapter}{\numberline {5}Conclusion}{15}
