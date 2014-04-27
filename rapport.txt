@@ -137,9 +137,27 @@ int mem_addr = [
 
 
 
+Dans pipe/psim.c:
+
+- Ajout dans stage implementations:	
+
+	int gen_instr_next_ifun();
+
+- Ajout de conditions : 
+ 
+	/* Ready to fetch instruction.  Speculatively fetch register byte
+	       and immediate word
+	*/
+
+	if(gen_instr_next_ifun() != -1)
+		if_id_next->ifun = gen_instr_next_ifun();
+	else{...}
+
+	fetch_ok = TRUE;
 
 
-
+    	if (gen_instr_next_ifun() == -1)
+      		pc_next->pc = gen_new_F_predPC();
 
 
 

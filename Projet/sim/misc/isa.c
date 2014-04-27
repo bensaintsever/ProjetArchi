@@ -84,7 +84,9 @@ instr_t instruction_set[] =
     {"isarl",  HPACK(I_ALUI, A_SAR),  6, I_ARG, 2, 4, R_ARG, 1, 0 },
     {"leave",  HPACK(I_LEAVE, 0), 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
     /* this is just a hack to make the I_LSM code have an associated name */
-    {"lsm",   HPACK(I_LSM, 0) , 0, NO_ARG, 0, 0, NO_ARG, 0, 0 },
+    {"lods",   HPACK(I_LSM, 0) , 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
+    {"stos",   HPACK(I_LSM, 1) , 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
+    {"movs",   HPACK(I_LSM, 2) , 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
     /* JB ajout 'jreg' et 'jmem' */
     {"jreg",   HPACK(I_JREG, 0) , 2, R_ARG, 1, 1, NO_ARG, 0, 0 },
     {"jmem",   HPACK(I_JMEM, 0), 6, M_ARG, 1, 0, NO_ARG, 0, 0 },
